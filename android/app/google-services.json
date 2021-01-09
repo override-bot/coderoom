@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "145394420093",
+    "project_id": "coderoom-96596",
+    "storage_bucket": "coderoom-96596.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:145394420093:android:c6450242b596b86fef2414",
+        "android_client_info": {
+          "package_name": "com.example.coderoom"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "145394420093-nhsakmpalred9mbch0vruttlfbak83s8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmGc0HT4EACwdj-65EIhbBA-mhLgGNCTI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "145394420093-nhsakmpalred9mbch0vruttlfbak83s8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
