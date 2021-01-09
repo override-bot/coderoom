@@ -18,7 +18,7 @@ class following extends StatefulWidget{
   // ignore: camel_case_types
   class _followingState extends State<following> {
     final User user = auth.currentUser;
-    Future<int> getFollowingCount() async{
+     Future<int> getFollowingCount() async{
       final count = await FirebaseFirestore
       .instance
       .collection("following")
@@ -27,13 +27,20 @@ class following extends StatefulWidget{
       .snapshots().length;
       return count;
     }
+    int userFollowing;
+    @override
+   void initState()async{
+     super.initState();
+     userFollowing = await getFollowingCount();
+   
+   }
   @override
   Widget build(BuildContext context) {
         return FutureBuilder<int>(
           future: getFollowingCount(),
           builder: (BuildContext context, AsyncSnapshot<int> snapshot){
             if(snapshot.hasData){
-              return "${snapshot.data}".text.center.xl2.bold.black.make();
+              return "$userFollowing".text.center.xl2.bold.black.make();
             }
             return "${0}".text.center.xl2.bold.black.make();
           },

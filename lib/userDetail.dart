@@ -20,52 +20,44 @@ class userDetail extends StatefulWidget {
   
   // ignore: camel_case_types
   class _userDetailState extends State<userDetail> {
-    
+  //  @override
     final User user = auth.currentUser;
-          bool isFollowing = true;
-           checkFollowing() async{
-            final  QuerySnapshot followers =  await FirebaseFirestore
+    isFolList() async{
+      final  QuerySnapshot followers =  await FirebaseFirestore
       .instance
       .collection("followers")
       .doc(widget.widgetId)
       .collection("UserFollowers").get();
         
         final List<DocumentSnapshot> followerList = followers.docs;
-        
          
-         setState((){
-           if (followerList.contains(user.uid)){
+         return followerList;
+        
+    }
+         
+  List followList; 
+  bool isFollowing;     
+@override
+void initState() async{
+  super.initState();
+  followList = isFolList().then((value){
+     setState((){
+           if (value.contains(user.uid)){
              isFollowing = true;
            }
            else {
              isFollowing = false;
            }
          });
-          }
-void iniState(){
- super.initState();
- checkFollowing();
+  });
+  
+         
+       
  
  
     }
-     Future<int> getFollowersCount() async{
-      final count = await FirebaseFirestore
-      .instance
-      .collection("followers")
-      .doc(widget.widgetId)
-      .collection("UserFollowers")
-      .snapshots().length;
-      return count;
-    }
-     Future<int> getFollowingCount() async{
-      final count = await FirebaseFirestore
-      .instance
-      .collection("following")
-      .doc(widget.widgetId)
-      .collection("UserFollowing")
-      .snapshots().length;
-      return count;
-    }
+    
+    
   @override
   Widget build(BuildContext context) {
              CollectionReference users = FirebaseFirestore.instance.collection('users');
@@ -90,45 +82,11 @@ void iniState(){
                      color: Colors.pink
                    ).py12(),
                  
-                 "${data['username']}".text.center.size(30).black.bold.make().py8(),
+                 "${data['username']}".text.center.size(30).black.bold.make().py12(),
                  "${data['occupation']}".text.center.size(20).gray600.make().py12(),
                    "${data['Bio']}".text.center.lg.gray700.make().py32(),
-                   Divider().py16(),
-                   Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                     children: <Widget>[
-                          Column(
-                            children: [
-                              
-                            FutureBuilder<int>(
-          future: getFollowersCount(),
-          builder: (BuildContext context, AsyncSnapshot<int> snapshot){
-            if(snapshot.hasData){
-              return "${snapshot.data}".text.center.xl2.bold.black.make();
-            }
-            return "${0}".text.center.xl2.bold.black.make();
-          },
-        ),
-                            "Followers".text.center.lg.bold.gray700.make()
-                            ],
-                          ),
-                           Column(
-                            children: [
-                             
-                            FutureBuilder<int>(
-          future: getFollowingCount(),
-          builder: (BuildContext context, AsyncSnapshot<int> snapshot){
-            if(snapshot.hasData){
-              return "${snapshot.data}".text.center.xl2.bold.black.make();
-            }
-            return "${0}".text.center.xl2.bold.black.make();
-          },
-        ),
-                            "Following".text.center.lg.bold.gray700.make()
-                            ],
-                          )
-                     ],
-                   ),
+  
+                  
                      FlatButton(
                  shape: RoundedRectangleBorder(
                    borderRadius: BorderRadius.circular(18.0),

@@ -27,13 +27,19 @@ class followers extends StatefulWidget{
       .snapshots().length;
       return count;
     }
+    int userFollowers;
+    @override
+    void initState() async{
+      super.initState();
+       userFollowers = await getFollowersCount();
+    }
   @override
   Widget build(BuildContext context) {
         return FutureBuilder<int>(
           future: getFollowersCount(),
           builder: (BuildContext context, AsyncSnapshot<int> snapshot){
             if(snapshot.hasData){
-              return "${snapshot.data}".text.center.xl2.bold.black.make();
+              return "$userFollowers".text.center.xl2.bold.black.make();
             }
             return "${0}".text.center.xl2.bold.black.make();
           },

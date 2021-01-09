@@ -11,7 +11,7 @@ Future followUser(userId, username) async{
       .collection("UserFollowing")
       .add({
               "followerId": userId,
-              "followerName": username
+              
       }).then((value) {
          FirebaseFirestore
       .instance
@@ -20,8 +20,6 @@ Future followUser(userId, username) async{
       .collection("UserFollowers")
       .add({
         "followerId": userId,
-        "followerName": username,
-        userId : true
       });
       }).catchError((error) => print("Somtething went wrong"));
 
