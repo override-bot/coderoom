@@ -27,11 +27,14 @@ class followers extends StatefulWidget{
       .snapshots().length;
       return count;
     }
+    changeValue()async {
+       userFollowers = await getFollowersCount();
+    }
     int userFollowers;
     @override
-    void initState() async{
+    void initState() {
       super.initState();
-       userFollowers = await getFollowersCount();
+      changeValue();
     }
   @override
   Widget build(BuildContext context) {

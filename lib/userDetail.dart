@@ -36,11 +36,9 @@ class userDetail extends StatefulWidget {
     }
          
   List followList; 
-  bool isFollowing;     
-@override
-void initState() async{
-  super.initState();
-  followList = isFolList().then((value){
+  bool isFollowing;
+  changeValue() async {
+    followList = await isFolList().then((value){
      setState((){
            if (value.contains(user.uid)){
              isFollowing = true;
@@ -50,6 +48,11 @@ void initState() async{
            }
          });
   });
+  }    
+@override
+void initState() {
+  super.initState();
+  changeValue();
   
          
        
@@ -92,7 +95,7 @@ void initState() async{
                    borderRadius: BorderRadius.circular(18.0),
                   
                  ),
-                 color:!isFollowing? Colors.pink : Colors.grey,
+                 color:isFollowing? Colors.pink : Colors.grey,
                  textColor: Colors.white,
                  onPressed: !isFollowing? () async {followUser(widget.widgetId, data['username']).then((value) => setState((){
           

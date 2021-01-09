@@ -28,10 +28,14 @@ class following extends StatefulWidget{
       return count;
     }
     int userFollowing;
+    changeVal() async {
+        userFollowing = await getFollowingCount();
+    }
     @override
-   void initState()async{
+   void initState(){
      super.initState();
-     userFollowing = await getFollowingCount();
+     changeVal();
+   
    
    }
   @override
