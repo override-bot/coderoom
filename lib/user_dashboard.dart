@@ -2,9 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:velocity_x/velocity_x.dart';
-import 'following.dart';
 import 'services/firebase auth.dart';
-import 'followers.dart';
+import 'signup.dart';
 // ignore: camel_case_types
 // ignore: camel_case_types
 class dashBoard extends StatefulWidget{
@@ -18,7 +17,7 @@ class dashBoard extends StatefulWidget{
   // ignore: camel_case_types
   class _dashBoardState extends State<dashBoard> {
      final User user = auth.currentUser;
-   
+   var authHandler = new Auth();
   @override
   Widget build(BuildContext context) {
    CollectionReference users = FirebaseFirestore.instance.collection('users');
@@ -30,7 +29,41 @@ class dashBoard extends StatefulWidget{
        }
        if(snapshot.connectionState == ConnectionState.done){
          Map<String, dynamic>data = snapshot.data.data();
-         return Container(
+         return Scaffold(
+            appBar: AppBar(
+         backgroundColor: Colors.white,
+         elevation: 0.0,
+        leading: Icon(Icons.person_pin, color: Colors.pink),
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.edit, color: Colors.black), 
+          onPressed: () {}),
+           IconButton(icon: Icon(Icons.logout, color: Colors.black), 
+          onPressed: () => showDialog<bool>(
+            context: context,
+            builder: (c) => AlertDialog(
+              title: Text('Warning'),
+              content: Text('Do you really want to log out'),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Yes'),
+                  // ignore: sdk_version_set_literal
+                  onPressed:() async {
+                    authHandler.handleSignOut().then((value){
+                       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => signUpPage()), (route) => false);
+                    });
+                  },
+                ),
+                 FlatButton(
+                  child: Text('No'),
+                  // ignore: sdk_version_set_literal
+                  onPressed:() => Navigator.pop(c),
+                ),
+              ],
+            )
+          ))
+        ],
+      ),
+         body: Container(
            //color: Colors.grey[100],
            child: Center(
              child: Column(
@@ -46,31 +79,15 @@ class dashBoard extends StatefulWidget{
                  "${data['occupation']}".text.center.size(25).gray600.make().py12(),
                    "${data['Bio']}".text.center.lg.gray700.make().py32(),
                    Divider().py16(),
-                   Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                     children: <Widget>[
-                          Column(
-                            children: [
-                              
-                             followers(),
-                            "Followers".text.center.lg.bold.gray700.make()
-                            ],
-                          ),
-                           Column(
-                            children: [
-                             
-                            following(),
-                            "Following".text.center.lg.bold.gray700.make()
-                            ],
-                          )
-                     ],
-                   )
+                  
                ],),
            ),
 
-         );
+         ).p16());
        }
-       return CircularProgressIndicator();
+        return Center(child: 
+            CircularProgressIndicator(),);
+          
      },
    );
   }

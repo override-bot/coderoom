@@ -1,9 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
-import 'allUsers.dart';
+import 'categories.dart';
 import 'services/firebase auth.dart';
-import 'signup.dart';
 import 'splash.dart';
 import 'uploadPage.dart';
 import 'user_dashboard.dart';
@@ -60,39 +58,7 @@ class _indexPageState extends State<indexPage> {
   Widget build(BuildContext context){
     return Scaffold(
 
-      appBar: AppBar(
-         backgroundColor: Colors.white,
-         elevation: 0.0,
-        leading: Icon(Icons.person_pin, color: Colors.pink),
-        actions: <Widget>[
-          IconButton(icon: Icon(Icons.notifications, color: Colors.black), 
-          onPressed: () {}),
-           IconButton(icon: Icon(Icons.logout, color: Colors.black), 
-          onPressed: () => showDialog<bool>(
-            context: context,
-            builder: (c) => AlertDialog(
-              title: Text('Warning'),
-              content: Text('Do you really want to log out'),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Yes'),
-                  // ignore: sdk_version_set_literal
-                  onPressed:() async {
-                    authHandler.handleSignOut().then((value){
-                       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => signUpPage()), (route) => false);
-                    });
-                  },
-                ),
-                 FlatButton(
-                  child: Text('No'),
-                  // ignore: sdk_version_set_literal
-                  onPressed:() => Navigator.pop(c),
-                ),
-              ],
-            )
-          ))
-        ],
-      ),
+     
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
         elevation: 0.0,
@@ -116,7 +82,7 @@ class _indexPageState extends State<indexPage> {
              IconButton(
               iconSize: 25.0,
   padding: EdgeInsets.only(right:28.0),
-              icon: Icon(Icons.people, color: currentPage== 1 ? Colors.pink : Colors.black),
+              icon: Icon(Icons.menu, color: currentPage== 1 ? Colors.pink : Colors.black),
               onPressed: () {
                 setState(() {
                   _myPage.jumpToPage(1);
@@ -157,11 +123,11 @@ class _indexPageState extends State<indexPage> {
             
             color: Colors.grey.shade200,
           ),),
-           Center(child:AllUsers(),),
+           categoryPage(),
            Center(child:Container(
              color: Colors.grey.shade200,
           ),),
-           Center(child:dashBoard(),)
+           dashBoard(),
         ],
 
     ),
