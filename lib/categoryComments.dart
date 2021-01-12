@@ -52,7 +52,8 @@ final String postID;
                 }
                 return new ListView(
                   children: snapshot.data.docs.map((DocumentSnapshot document){
-                        return new Card(
+                        return new Column(
+                        children: [Card(
                           child:new Column(
                             children: [
                               new ListTile(
@@ -65,7 +66,8 @@ final String postID;
                               )
                             ],
                           )
-                        ).p16();
+                        ).p16(),
+                        Divider()]);
                   }).toList()
                 );
               },

@@ -40,11 +40,14 @@ class categoryPage extends StatefulWidget{
                     ]),
                     body: new ListView(
                       children: snapshot.data.docs.map((DocumentSnapshot document){
-                            return new GestureDetector(
+                            return new Container(decoration: BoxDecoration(
+                              border: Border.all(color: Colors.pinkAccent)
+                            ),
+                            child: new GestureDetector(
                               child:  '${document.data()['category']}'.text.size(30).bold.make(),
                               onTap: (){
                                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => categoryPosts(categoryName:document.data()['category'])));
-                              },).py16();
+                              },).py16());
                       }).toList(),
                     ),
           );
