@@ -19,25 +19,11 @@ class uploadPage extends StatefulWidget {
     TextEditingController _PostField = TextEditingController();
      bool isEnabled = false;
      String category;
-    Future<List<String>> getCategories() async {
-       
-        QuerySnapshot categories = await FirebaseFirestore
-       .instance
-       .collection("Categories").get();
-     return categories.docs
-     .map((snap) => snap.data()["category"]).toList();
-    
-     }
-    
-    
-     List<String>categories = List<String>();
-     @override
-     void initState(){
-       super.initState();
-     }
+   bool _isEnabled = false; 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
                backgroundColor: Colors.white,
          elevation: 0.0,
@@ -55,7 +41,7 @@ class uploadPage extends StatefulWidget {
                  ),
                  color: Colors.pink,
                  textColor: Colors.white,
-                 onPressed: isEnabled? () async {uploadPost(_PostField.text, category).then((value) {
+                 onPressed: isEnabled & !_isEnabled? () async {uploadPost(_PostField.text, category).then((value) {
                  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => indexPage()), (route) => false);
               });} : null,
                   child: "Post".text.bold.make(),
@@ -69,7 +55,7 @@ class uploadPage extends StatefulWidget {
          children: [TextField(
             onChanged: (text){
                         setState((){
-                          if(text.length > 30)
+                          if(text.length > 10)
                           isEnabled = true;
                           else
                           isEnabled = false;
@@ -83,54 +69,61 @@ class uploadPage extends StatefulWidget {
             decoration: InputDecoration(
                         hintText: "Start a new conversation",
                         
-                        errorText: !isEnabled ? 'post should be more than 30 characters' : null
+                        errorText: !isEnabled ? 'post should be more than 10 characters' : null
                       ), 
 
+
          ),
-         InputDecorator(
-           isEmpty: isEnabled = false,
-           decoration: InputDecoration(
-             errorText: !isEnabled ? 'Select a category' : null,
-             hintText: 'Choose a category',
-             isDense: true,
-             border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),  
-           ),
-        child: FutureBuilder<List<String>>(
-          future: getCategories(),
-          builder: (context, snapshot){
-            if(snapshot.hasData){
-             return DropdownButton<String>(
-           value: category,
-           icon: Icon(Icons.arrow_downward),
-           iconSize: 24,
-          elevation: 16,
-          style: TextStyle(
-            color: Colors.pink
-          ),
-          underline: Container(
-            height: 2,
-            color: Colors.pinkAccent,
-          ),
-          onChanged: (String newValue){
-            setState((){
-              category = newValue;
-            });
-          },
-          items: snapshot.data
-          .map<DropdownMenuItem<String>>
-          ((String value){
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-          
-         );
-            }
-            return Text("0");
-          }
-        
-         ))] ).p16(),
+         new StreamBuilder<QuerySnapshot>(
+           stream:FirebaseFirestore.instance.collection("Categories").snapshots(),
+           builder:(context, snapshot){
+             if(!snapshot.hasData){
+               return Center(
+               child:  CircularProgressIndicator(backgroundColor: Colors.pink)
+               );
+             }
+              
+              return new Container(
+               // padding: EdgeInsets.only(bottom:16.0),
+                width: MediaQuery.of(context).size.width,
+                child: new InputDecorator(
+                  decoration: InputDecoration(
+                    hintText: "Choose a category",
+                    errorText: _isEnabled ? "Add a category": null,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0))
+                  ) ,
+                  isEmpty: _isEnabled = false,
+                  child: new DropdownButton(
+                    value: category,
+                    isExpanded: true,
+                    isDense: true,
+                    onChanged: (String newValue){
+                      setState((){
+                        category = newValue;
+                        _isEnabled = true;
+                      });
+
+                    },
+                    items: snapshot.data.docs.map((DocumentSnapshot document){
+                      return new DropdownMenuItem<String>(
+                      value:document.data()['category'],
+                      child: new Container(
+                        decoration: new BoxDecoration(
+                          borderRadius: new BorderRadius.circular(5.0)
+                        ),
+                        height:90,
+                       
+                        child: new Text(document.data()['category']),
+                      ),
+                     ); }).toList(),
+                  ),
+                ),
+              );
+
+             }
+           
+         ).py12(),
+       ] ).p16(),
     ));
   }
   }

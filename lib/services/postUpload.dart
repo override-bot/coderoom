@@ -50,6 +50,7 @@ Future addComment(comment, postId) async{
         final name = displayname; 
         FirebaseFirestore.instance.collection('Comments').doc(postId).collection('postComments').add({
                   'name': name,
-                  'comment':comment         
+                  'comment':comment ,
+                  "timeStamp": DateTime.now()        
         });
 }

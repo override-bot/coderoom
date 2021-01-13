@@ -33,38 +33,53 @@ Query categoryPosts = FirebaseFirestore.instance
           }
                 
                 return  new Scaffold(
+                  backgroundColor:Colors.white,
                       appBar: AppBar(
          backgroundColor: Colors.white,
-         elevation: 0.0,
+         elevation: 1.0,
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.edit, color: Colors.black), 
+          IconButton(icon: Icon(Icons.edit, color: Colors.pink), 
           onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(builder: (context) => uploadPage()));
           }),
                     ]),
                     body: new ListView(
                       children: snapshot.data.docs.map((DocumentSnapshot document){
-                        return new GestureDetector(
+                        return new Container(
+                          decoration: BoxDecoration(
+                               // border: Border.all(color:Colors.grey),
+                                color: Colors.white,
+                                boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 5,
+                                      blurRadius: 7,
+                                      offset: Offset(0,3)
+                                    ),
+                                ],
+                          ),
+                        child: GestureDetector(
+                          
                           onTap: (){
                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => categoryComments(post:document.data()['post'], postID: document.id)));
                           },
                               child: new Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                                   new ListTile(
-                                    title:  "${document.data()['name']}".text.bold.black.lg.make(),
-                                    subtitle: "${document.data()['time']}".text.bold.gray500.make(),
+                                    title:  "${document.data()['name']}".text.bold.black.size(30).make(),
+                                    subtitle: "${document.data()['time'].toDate()}".text.bold.gray500.make(),
                                   ),
                                   new Container(
-                                    constraints: BoxConstraints(maxWidth:250),
+                                    constraints: BoxConstraints(maxWidth:MediaQuery.of(context).size.width),
                                     padding: EdgeInsets.all(10),
-                                    child: new Text(document.data()['post'])
+                                    child:  "${document.data()['post']}".text.lg.make()
                                   ),
                                   Divider(),
-                                  "Tap to join this conversation".text.bold.pink500.make()
+                                  "Tap to join this conversation".text.bold.pink500.make().py16()
                           ],
                               ),
-                        ).p16();
+                        )).p12();
                       }).toList()
                     ) ,
                 );

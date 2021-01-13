@@ -29,89 +29,111 @@ final String postID;
       appBar: AppBar(
         title: Text('Comments'),
         leading: IconButton(
-           icon: Icon(Icons.arrow_back, color: Colors.pink),
+           icon: Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => Navigator.pop(context),
             ),
       ),
-      body: Stack(
-        children: [ Column(
+      body: Column(children:[
+        Expanded(
+
+        child:Column(
           children: [
             Container(
-              constraints: BoxConstraints(maxWidth: 200),
-              child: Text(widget.post),
-            ),
+              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width),
+              child: "${widget.post}".text.lg.bold.make(),
+            ).p16(),
             Divider(),
+           
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('Comments').doc(widget.postID).collection('postComments').snapshots(),
+              stream: FirebaseFirestore.instance.collection('Comments').doc(widget.postID).collection('postComments').orderBy("timeStamp", descending:false).snapshots(),
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
-                if(snapshot.hasError){
-                  return Text('Something went wrong');
-                }
+                
+               
+                
                 if(snapshot.connectionState == ConnectionState.waiting){
                   return CircularProgressIndicator();
                 }
-                return new ListView(
+                if(snapshot.hasData){
+                  //return CircularProgressIndicator().p16();
+                
+                return new Expanded(child:
+                ListView(
+                  shrinkWrap: true,
                   children: snapshot.data.docs.map((DocumentSnapshot document){
-                        return new Column(
-                        children: [Card(
+                        return new Container(
+                            decoration: BoxDecoration(
+                               // border: Border.all(color:Colors.grey),
+                                color: Colors.white,
+                                boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.3),
+                                      spreadRadius: 5,
+                                      blurRadius: 7,
+                                      offset: Offset(0,3)
+                                    ),
+                                ],
+                          ),
                           child:new Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              new ListTile(
-                                title: new Text(document.data()['name']),
-                              ),
+                              "${document.data()['name']}".text.size(20).make().py12(),
+                              
+                            
                               Container(
                                 constraints: BoxConstraints(
-                                  maxHeight: 200,
+                                  maxWidth: 250,
                                 ),
+                                child: "${document.data()['comment']}".text.lg.bold.make().py24()
                               )
                             ],
                           )
-                        ).p16(),
-                        Divider()]);
+                        ).p16();
                   }).toList()
-                );
+                ));
+                }
+                   return Text('Something went wrong');
               },
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                height:20.0,
-                padding: EdgeInsets.symmetric(vertical: 2.0),
-                alignment: Alignment.bottomCenter,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextFormField(
-                       onChanged: (text){
-                        setState((){
-                          if(text.length > 1)
-                          isEnabled = true;
-                          else
-                          isEnabled = false;
-                        });
-                      },
-                      controller: commentController,
-                      decoration: new InputDecoration(
-                        hintText: 'Add a comment',
-                         errorText: !isEnabled ? 'post should be more than 1 character' : null,
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black),
-                        )
-                      )),
-                    IconButton(
-                      icon: Icon(Icons.send),
-                      iconSize:20.0,
-                      onPressed: isEnabled? ()async {
-                        await addComment(commentController.text, widget.postID);}: null
-                    )
-                  ],
-                ),
-              ),
+         
+              
+    ]),
+    
+    ),
+    Container(
+      padding: EdgeInsets.symmetric(vertical: 2.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Expanded(child:
+          TextFormField(
+            onChanged:(text){
+              setState((){
+                    if(text.length>1)
+                    isEnabled= true;
+                    else
+                    isEnabled = false;
+              });
+            },
+            controller: commentController,
+            decoration: InputDecoration(
+              hintText: "add comment",
+              errorText: !isEnabled? "Post should be more then one character":null,
+              border: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+              )
             )
-          ],
-        ),
-        ]),
-    );
+          ).px2()),
+          IconButton(
+            icon: Icon(Icons.send, color:Colors.pink),
+            iconSize: 30.0,
+            onPressed: isEnabled? () async{
+              await addComment(commentController.text, widget.postID).then((value) => commentController.clear());
+            }:null,
+          ).py4()
+        ],
+      ),
+    )
+    ]));
     
   }
   }
